@@ -7,14 +7,28 @@ import { App } from '@capacitor/app';
 const Onboarding = () => {
   useEffect(() => {
     // Handle the back button for Android devices
-    const backButtonListener = App.addListener('backButton', ({ canGoBack }) => {
-      if (!canGoBack) {
-        App.exitApp();
-      }
+    const setupBackButton = async () => {
+      const backButtonListener = await App.addListener('backButton', ({ canGoBack }) => {
+        if (!canGoBack) {
+          App.exitApp();
+        }
+      });
+
+      return backButtonListener;
+    };
+
+    let listener: { remove: () => void } | undefined;
+    
+    setupBackButton().then(backButtonListener => {
+      listener = backButtonListener;
+    }).catch(error => {
+      console.error('Error setting up back button listener:', error);
     });
 
     return () => {
-      backButtonListener.remove();
+      if (listener) {
+        listener.remove();
+      }
     };
   }, []);
 

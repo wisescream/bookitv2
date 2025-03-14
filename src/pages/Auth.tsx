@@ -8,11 +8,15 @@ import { StatusBar, Style } from '@capacitor/status-bar';
 const Auth = () => {
   useEffect(() => {
     // Handle the back button for Android devices
-    const backButtonListener = App.addListener('backButton', ({ canGoBack }) => {
-      if (!canGoBack) {
-        App.exitApp();
-      }
-    });
+    const setupBackButton = async () => {
+      const backButtonListener = await App.addListener('backButton', ({ canGoBack }) => {
+        if (!canGoBack) {
+          App.exitApp();
+        }
+      });
+
+      return backButtonListener;
+    };
     
     // Set status bar to dark content on light background
     const setupStatusBar = async () => {
@@ -24,10 +28,20 @@ const Auth = () => {
       }
     };
     
+    let listener: { remove: () => void } | undefined;
+    
+    setupBackButton().then(backButtonListener => {
+      listener = backButtonListener;
+    }).catch(error => {
+      console.error('Error setting up back button listener:', error);
+    });
+    
     setupStatusBar();
 
     return () => {
-      backButtonListener.remove();
+      if (listener) {
+        listener.remove();
+      }
     };
   }, []);
 
