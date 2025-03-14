@@ -4,6 +4,7 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { motion } from 'framer-motion';
 import { useToast } from "@/components/ui/use-toast";
+import { useNavigate } from 'react-router-dom';
 
 interface AuthFormProps {
   type: 'signup' | 'login';
@@ -12,6 +13,7 @@ interface AuthFormProps {
 const AuthForm: React.FC<AuthFormProps> = ({ type }) => {
   const { toast } = useToast();
   const [loading, setLoading] = useState(false);
+  const navigate = useNavigate();
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -24,8 +26,11 @@ const AuthForm: React.FC<AuthFormProps> = ({ type }) => {
       
       toast({
         title: type === 'signup' ? "Account created!" : "Successfully logged in!",
-        description: "Welcome to FoodMedia",
+        description: "Welcome to BOOKIT",
       });
+
+      // Navigate to home page after successful authentication
+      navigate('/home');
     }, 1500);
   };
 
@@ -40,6 +45,9 @@ const AuthForm: React.FC<AuthFormProps> = ({ type }) => {
         title: "Google Authentication",
         description: `${type === 'signup' ? 'Sign up' : 'Login'} with Google successful!`,
       });
+
+      // Navigate to home page after successful authentication
+      navigate('/home');
     }, 1500);
   };
 
@@ -49,6 +57,7 @@ const AuthForm: React.FC<AuthFormProps> = ({ type }) => {
       animate={{ opacity: 1 }}
       exit={{ opacity: 0 }}
       transition={{ duration: 0.3 }}
+      className="px-1"
     >
       <form onSubmit={handleSubmit} className="space-y-4">
         {type === 'signup' && (

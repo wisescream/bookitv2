@@ -39,7 +39,7 @@ const Auth = () => {
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5, delay: 0.3 }}
           >
-            Welcome
+            Welcome to BOOKIT
           </motion.h1>
           
           <motion.p 
@@ -48,7 +48,7 @@ const Auth = () => {
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5, delay: 0.4 }}
           >
-            Before Enjoying Foodmedia Services<br />Please Register First
+            Before enjoying BOOKIT services<br />Please register first
           </motion.p>
         </motion.div>
         

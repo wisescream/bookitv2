@@ -4,10 +4,11 @@ import { useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import OnboardingSlide from './OnboardingSlide';
 import { ArrowRight } from 'lucide-react';
+import { useIsMobile } from '@/hooks/use-mobile';
 
 const slides = [
   {
-    image: '/lovable-uploads/3daa0da2-3a5d-4a93-a657-997c4cb80ed4.png',
+    image: '/lovable-uploads/4035ab2b-7740-4f2f-84b9-4aa8d15f60d3.png',
     title: 'Nearby restaurants',
     description: "You don't have to go far to find a good restaurant, we have provided all the restaurants that is near you"
   },
@@ -26,6 +27,7 @@ const slides = [
 const OnboardingCarousel = () => {
   const [activeSlide, setActiveSlide] = useState(0);
   const navigate = useNavigate();
+  const isMobile = useIsMobile();
 
   const handleNext = () => {
     if (activeSlide < slides.length - 1) {
@@ -43,7 +45,7 @@ const OnboardingCarousel = () => {
     <div className="h-full w-full flex flex-col">
       <div className="flex-1 overflow-hidden relative">
         <div 
-          className="slide-container w-full h-full flex"
+          className="slide-container w-full h-full flex transition-transform duration-300"
           style={{ transform: `translateX(-${activeSlide * 100}%)` }}
         >
           {slides.map((slide, index) => (
@@ -59,10 +61,10 @@ const OnboardingCarousel = () => {
         </div>
       </div>
 
-      <div className="px-6 py-8 flex justify-between items-center">
+      <div className={`px-6 py-8 flex justify-between items-center ${isMobile ? 'pb-10' : ''}`}>
         <button 
           onClick={handleSkip}
-          className="text-foodapp-muted font-medium transition-colors hover:text-foodapp-text"
+          className="text-foodapp-muted font-medium transition-colors hover:text-foodapp-text active:scale-95"
         >
           Skip
         </button>

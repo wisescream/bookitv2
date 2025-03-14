@@ -11,6 +11,9 @@ const Onboarding = () => {
       exit={{ opacity: 0 }}
       transition={{ duration: 0.5 }}
     >
+      <div className="pt-6 px-6">
+        <h1 className="text-2xl font-bold text-foodapp-text">BOOKIT</h1>
+      </div>
       <OnboardingCarousel />
     </motion.div>
   );
