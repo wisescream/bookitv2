@@ -1,8 +1,36 @@
 
 import { motion } from 'framer-motion';
 import AuthCard from '@/components/AuthCard';
+import { useEffect } from 'react';
+import { App } from '@capacitor/app';
+import { StatusBar, Style } from '@capacitor/status-bar';
 
 const Auth = () => {
+  useEffect(() => {
+    // Handle the back button for Android devices
+    const backButtonListener = App.addListener('backButton', ({ canGoBack }) => {
+      if (!canGoBack) {
+        App.exitApp();
+      }
+    });
+    
+    // Set status bar to dark content on light background
+    const setupStatusBar = async () => {
+      try {
+        await StatusBar.setStyle({ style: Style.Light });
+      } catch (error) {
+        // Web environment or status bar plugin not available
+        console.log('Status bar customization skipped');
+      }
+    };
+    
+    setupStatusBar();
+
+    return () => {
+      backButtonListener.remove();
+    };
+  }, []);
+
   return (
     <motion.div 
       className="min-h-screen w-screen flex flex-col onboarding-background"

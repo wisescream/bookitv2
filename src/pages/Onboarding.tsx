@@ -1,8 +1,23 @@
 
 import { motion } from 'framer-motion';
 import OnboardingCarousel from '@/components/OnboardingCarousel';
+import { useEffect } from 'react';
+import { App } from '@capacitor/app';
 
 const Onboarding = () => {
+  useEffect(() => {
+    // Handle the back button for Android devices
+    const backButtonListener = App.addListener('backButton', ({ canGoBack }) => {
+      if (!canGoBack) {
+        App.exitApp();
+      }
+    });
+
+    return () => {
+      backButtonListener.remove();
+    };
+  }, []);
+
   return (
     <motion.div 
       className="h-screen w-screen flex flex-col onboarding-background"
