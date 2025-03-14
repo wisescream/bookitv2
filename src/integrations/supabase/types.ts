@@ -91,6 +91,42 @@ export type Database = {
           },
         ]
       }
+      hotels: {
+        Row: {
+          address: string
+          city: string
+          created_at: string | null
+          description: string | null
+          id: string
+          image_url: string | null
+          name: string
+          price_per_night: number
+          rating: number | null
+        }
+        Insert: {
+          address: string
+          city: string
+          created_at?: string | null
+          description?: string | null
+          id?: string
+          image_url?: string | null
+          name: string
+          price_per_night: number
+          rating?: number | null
+        }
+        Update: {
+          address?: string
+          city?: string
+          created_at?: string | null
+          description?: string | null
+          id?: string
+          image_url?: string | null
+          name?: string
+          price_per_night?: number
+          rating?: number | null
+        }
+        Relationships: []
+      }
       profiles: {
         Row: {
           avatar_url: string | null
@@ -142,6 +178,42 @@ export type Database = {
           image_url?: string | null
           name?: string
           open_time?: string
+        }
+        Relationships: []
+      }
+      spas: {
+        Row: {
+          address: string
+          city: string
+          created_at: string | null
+          description: string | null
+          id: string
+          image_url: string | null
+          name: string
+          price_per_session: number
+          rating: number | null
+        }
+        Insert: {
+          address: string
+          city: string
+          created_at?: string | null
+          description?: string | null
+          id?: string
+          image_url?: string | null
+          name: string
+          price_per_session: number
+          rating?: number | null
+        }
+        Update: {
+          address?: string
+          city?: string
+          created_at?: string | null
+          description?: string | null
+          id?: string
+          image_url?: string | null
+          name?: string
+          price_per_session?: number
+          rating?: number | null
         }
         Relationships: []
       }

@@ -13,6 +13,9 @@ import NotFound from "./pages/NotFound";
 import Onboarding from "./pages/Onboarding";
 import Auth from "./pages/Auth";
 import ResetPassword from "./pages/ResetPassword";
+import Restaurants from "./pages/Restaurants";
+import Hotels from "./pages/Hotels";
+import Spas from "./pages/Spas";
 
 const queryClient = new QueryClient();
 
@@ -51,6 +54,18 @@ const AppRoutes = () => {
         <Route 
           path="/home" 
           element={initialSession ? <Index /> : <Navigate to="/auth" replace />} 
+        />
+        <Route 
+          path="/restaurants" 
+          element={initialSession ? <Restaurants /> : <Navigate to="/auth" replace />} 
+        />
+        <Route 
+          path="/hotels" 
+          element={initialSession ? <Hotels /> : <Navigate to="/auth" replace />} 
+        />
+        <Route 
+          path="/spas" 
+          element={initialSession ? <Spas /> : <Navigate to="/auth" replace />} 
         />
         <Route path="*" element={<NotFound />} />
       </Routes>
