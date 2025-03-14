@@ -5,6 +5,9 @@ import { Button } from "@/components/ui/button";
 import { motion } from 'framer-motion';
 import { useToast } from "@/components/ui/use-toast";
 import { useNavigate } from 'react-router-dom';
+import { supabase } from "@/integrations/supabase/client";
+import { AlertCircle } from 'lucide-react';
+import { Alert, AlertDescription } from "@/components/ui/alert";
 
 interface AuthFormProps {
   type: 'signup' | 'login';
@@ -13,42 +16,125 @@ interface AuthFormProps {
 const AuthForm: React.FC<AuthFormProps> = ({ type }) => {
   const { toast } = useToast();
   const [loading, setLoading] = useState(false);
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const [fullName, setFullName] = useState('');
+  const [error, setError] = useState<string | null>(null);
   const navigate = useNavigate();
 
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    
-    setLoading(true);
-    
-    // Simulate API call
-    setTimeout(() => {
-      setLoading(false);
-      
-      toast({
-        title: type === 'signup' ? "Account created!" : "Successfully logged in!",
-        description: "Welcome to BOOKIT",
-      });
-
-      // Navigate to home page after successful authentication
-      navigate('/home');
-    }, 1500);
+  const validateInputs = () => {
+    if (!email) {
+      setError('Email is required');
+      return false;
+    }
+    if (!password) {
+      setError('Password is required');
+      return false;
+    }
+    if (type === 'signup' && !fullName) {
+      setError('Full name is required');
+      return false;
+    }
+    return true;
   };
 
-  const handleGoogleAuth = () => {
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setError(null);
+    
+    if (!validateInputs()) return;
+    
     setLoading(true);
     
-    // Simulate API call
-    setTimeout(() => {
+    try {
+      if (type === 'signup') {
+        const { data, error } = await supabase.auth.signUp({
+          email,
+          password,
+          options: {
+            data: {
+              full_name: fullName,
+            }
+          }
+        });
+
+        if (error) throw error;
+        
+        toast({
+          title: "Account created!",
+          description: "Please check your email to verify your account.",
+        });
+        
+      } else {
+        const { data, error } = await supabase.auth.signInWithPassword({
+          email,
+          password,
+        });
+
+        if (error) throw error;
+        
+        toast({
+          title: "Successfully logged in!",
+          description: "Welcome to BOOKIT",
+        });
+
+        navigate('/home');
+      }
+    } catch (error: any) {
+      setError(error.message || 'An unexpected error occurred');
+      console.error('Auth error:', error);
+    } finally {
       setLoading(false);
-      
-      toast({
-        title: "Google Authentication",
-        description: `${type === 'signup' ? 'Sign up' : 'Login'} with Google successful!`,
+    }
+  };
+
+  const handleGoogleAuth = async () => {
+    setLoading(true);
+    setError(null);
+    
+    try {
+      const { data, error } = await supabase.auth.signInWithOAuth({
+        provider: 'google',
+        options: {
+          redirectTo: `${window.location.origin}/home`,
+        }
       });
 
-      // Navigate to home page after successful authentication
-      navigate('/home');
-    }, 1500);
+      if (error) throw error;
+      
+    } catch (error: any) {
+      setError(error.message || 'An unexpected error occurred');
+      console.error('Google auth error:', error);
+      setLoading(false);
+    }
+  };
+
+  const handleForgotPassword = async () => {
+    if (!email) {
+      setError('Please enter your email address');
+      return;
+    }
+    
+    setLoading(true);
+    setError(null);
+    
+    try {
+      const { error } = await supabase.auth.resetPasswordForEmail(email, {
+        redirectTo: `${window.location.origin}/reset-password`,
+      });
+      
+      if (error) throw error;
+      
+      toast({
+        title: "Password reset email sent",
+        description: "Please check your email for a link to reset your password.",
+      });
+    } catch (error: any) {
+      setError(error.message || 'Failed to send reset password email');
+      console.error('Reset password error:', error);
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -59,6 +145,13 @@ const AuthForm: React.FC<AuthFormProps> = ({ type }) => {
       transition={{ duration: 0.3 }}
       className="px-1"
     >
+      {error && (
+        <Alert variant="destructive" className="mb-4">
+          <AlertCircle className="h-4 w-4" />
+          <AlertDescription>{error}</AlertDescription>
+        </Alert>
+      )}
+
       <form onSubmit={handleSubmit} className="space-y-4">
         {type === 'signup' && (
           <div className="space-y-2">
@@ -70,6 +163,8 @@ const AuthForm: React.FC<AuthFormProps> = ({ type }) => {
               type="text"
               placeholder="Enter your full name"
               className="w-full border border-gray-200 focus:border-foodapp-primary focus:ring-0"
+              value={fullName}
+              onChange={(e) => setFullName(e.target.value)}
               required
             />
           </div>
@@ -82,8 +177,10 @@ const AuthForm: React.FC<AuthFormProps> = ({ type }) => {
           <Input
             id="email"
             type="email"
-            placeholder="Eg namaemail@emailkamu.com"
+            placeholder="Eg name@email.com"
             className="w-full border border-gray-200 focus:border-foodapp-primary focus:ring-0"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
             required
           />
         </div>
@@ -94,9 +191,13 @@ const AuthForm: React.FC<AuthFormProps> = ({ type }) => {
               Password
             </label>
             {type === 'login' && (
-              <a href="#" className="text-xs text-foodapp-primary">
-                Forget Password?
-              </a>
+              <button 
+                type="button" 
+                onClick={handleForgotPassword}
+                className="text-xs text-foodapp-primary"
+              >
+                Forgot Password?
+              </button>
             )}
           </div>
           <Input
@@ -104,6 +205,8 @@ const AuthForm: React.FC<AuthFormProps> = ({ type }) => {
             type="password"
             placeholder="●●●● ●●●● ●●●●"
             className="w-full border border-gray-200 focus:border-foodapp-primary focus:ring-0"
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
             required
           />
         </div>
