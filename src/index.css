@@ -1,3 +1,6 @@
+
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -96,6 +99,50 @@
   }
 
   body {
-    @apply bg-background text-foreground;
+    @apply bg-background text-foreground font-sans overflow-x-hidden;
+  }
+
+  .glass-card {
+    @apply bg-white/80 backdrop-blur-sm border border-white/20 shadow-glass;
+  }
+
+  .onboarding-background {
+    @apply relative overflow-hidden;
+  }
+
+  .onboarding-background::before {
+    content: '';
+    @apply absolute -top-20 -left-20 w-[500px] h-[500px] rounded-full bg-foodapp-secondary/40 blur-3xl;
+    z-index: -1;
+  }
+
+  .onboarding-background::after {
+    content: '';
+    @apply absolute -right-20 -bottom-20 w-[300px] h-[300px] rounded-full bg-foodapp-secondary/30 blur-3xl;
+    z-index: -1;
+  }
+  
+  .tab-indicator {
+    transition: transform 0.3s ease;
+  }
+
+  .slide-container {
+    transition: transform 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+  
+  .green-accent {
+    position: relative;
+  }
+  
+  .green-accent::after {
+    content: '';
+    position: absolute;
+    bottom: -4px;
+    left: 0;
+    width: 100%;
+    height: 2px;
+    background-color: #27AE60;
+    transform: scaleX(1);
+    transition: transform 0.3s ease;
   }
 }
