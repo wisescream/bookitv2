@@ -16,6 +16,9 @@ import ResetPassword from "./pages/ResetPassword";
 import Restaurants from "./pages/Restaurants";
 import Hotels from "./pages/Hotels";
 import Spas from "./pages/Spas";
+import Search from "./pages/Search";
+import Orders from "./pages/Orders";
+import Profile from "./pages/Profile";
 
 const queryClient = new QueryClient();
 
@@ -81,6 +84,18 @@ const AppRoutes = () => {
         <Route 
           path="/spas" 
           element={initialSession ? <Spas /> : <Navigate to="/auth" replace />} 
+        />
+        <Route 
+          path="/search" 
+          element={initialSession ? <Search /> : <Navigate to="/auth" replace />} 
+        />
+        <Route 
+          path="/orders" 
+          element={initialSession ? <Orders /> : <Navigate to="/auth" replace />} 
+        />
+        <Route 
+          path="/profile" 
+          element={initialSession ? <Profile /> : <Navigate to="/auth" replace />} 
         />
         <Route path="*" element={<NotFound />} />
       </Routes>
