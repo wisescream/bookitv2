@@ -1,7 +1,7 @@
 
 import { motion } from 'framer-motion';
 import { Button } from '@/components/ui/button';
-import { MapPin, Search, Home, Menu, User, Hotel, Utensils, Sparkles } from 'lucide-react';
+import { MapPin, Search, Home, Menu, User, Hotel as HotelIcon, Utensils, Sparkles } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { useEffect, useState } from 'react';
 import { supabase } from '@/integrations/supabase/client';
@@ -108,7 +108,7 @@ const Index = () => {
             className="flex flex-col h-auto py-3 bg-white"
             onClick={() => navigate('/hotels')}
           >
-            <Hotel size={24} className="mb-2 text-foodapp-primary" />
+            <HotelIcon size={24} className="mb-2 text-foodapp-primary" />
             <span>Hotels</span>
           </Button>
           <Button 
