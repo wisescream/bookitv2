@@ -53,6 +53,30 @@ export type Booking = {
   restaurant?: Restaurant;
 };
 
+export type HotelBooking = {
+  id: string;
+  user_id: string;
+  hotel_id: string;
+  check_in_date: string;
+  check_out_date: string;
+  guests: number;
+  status: string;
+  created_at: string;
+  hotel?: Hotel;
+};
+
+export type SpaBooking = {
+  id: string;
+  user_id: string;
+  spa_id: string;
+  booking_date: string;
+  booking_time: string;
+  service_type: string;
+  status: string;
+  created_at: string;
+  spa?: Spa;
+};
+
 export type FoodItem = {
   id: string;
   name: string;

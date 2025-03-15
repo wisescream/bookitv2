@@ -1,18 +1,33 @@
+
 import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { Button } from '@/components/ui/button';
-import { Search, ChevronLeft, Home, Menu, User } from 'lucide-react';
+import { Search, ChevronLeft, Home, Menu, User, ChevronRight } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { supabase } from '@/integrations/supabase/client';
 import { Spa } from '@/integrations/supabase/types-db';
 import VenueCard from '@/components/VenueCard';
 import { useToast } from '@/components/ui/use-toast';
+import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs';
+
+// Spa categories
+const categories = [
+  { id: 'massage', name: 'Massage', icon: '💆' },
+  { id: 'facial', name: 'Facial', icon: '😊' },
+  { id: 'sauna', name: 'Sauna', icon: '🧖' },
+  { id: 'wellness', name: 'Wellness', icon: '🧘' },
+  { id: 'therapy', name: 'Therapy', icon: '🌿' },
+  { id: 'beauty', name: 'Beauty', icon: '💅' },
+];
 
 const Spas = () => {
   const navigate = useNavigate();
   const { toast } = useToast();
   const [spas, setSpas] = useState<Spa[]>([]);
+  const [nearbySpas, setNearbySpas] = useState<Spa[]>([]);
+  const [bestSpas, setBestSpas] = useState<Spa[]>([]);
   const [loading, setLoading] = useState(true);
+  const [activeTab, setActiveTab] = useState<string>('all');
 
   useEffect(() => {
     const fetchSpas = async () => {
@@ -24,6 +39,17 @@ const Spas = () => {
         if (error) throw error;
         
         setSpas(data || []);
+
+        // For demo purposes, we'll randomly assign these to nearby and best
+        // In a real app, this would use geolocation and ratings
+        if (data) {
+          const shuffled = [...data].sort(() => 0.5 - Math.random());
+          setNearbySpas(shuffled.slice(0, 4));
+          
+          // Sort by rating for "best" spas
+          const sorted = [...data].sort((a, b) => (b.rating || 0) - (a.rating || 0));
+          setBestSpas(sorted.slice(0, 4));
+        }
       } catch (error) {
         console.error('Error fetching spas:', error);
         toast({
@@ -38,6 +64,17 @@ const Spas = () => {
 
     fetchSpas();
   }, [toast]);
+
+  const handleTabChange = (value: string) => {
+    setActiveTab(value);
+  };
+
+  const handleViewAll = (section: string) => {
+    // In a real app, this would navigate to a filtered view
+    console.log(`View all ${section}`);
+    // For now, just set tab to 'all'
+    setActiveTab('all');
+  };
 
   return (
     <motion.div 
@@ -77,28 +114,142 @@ const Spas = () => {
           </div>
         ) : (
           <>
-            {spas.length === 0 ? (
-              <div className="text-center py-8">
-                <p className="text-foodapp-muted">No spas found.</p>
-              </div>
-            ) : (
-              <div className="grid grid-cols-2 gap-4">
-                {spas.map((spa) => (
-                  <VenueCard
-                    key={spa.id}
-                    id={spa.id}
-                    name={spa.name}
-                    address={spa.address}
-                    city={spa.city}
-                    imageUrl={spa.image_url}
-                    rating={spa.rating}
-                    price={spa.price_per_session}
-                    priceLabel="From"
-                    type="spa"
-                  />
-                ))}
-              </div>
-            )}
+            <Tabs value={activeTab} onValueChange={handleTabChange} className="w-full">
+              <TabsList className="grid grid-cols-3 mb-4">
+                <TabsTrigger value="all">All</TabsTrigger>
+                <TabsTrigger value="nearby">Nearby</TabsTrigger>
+                <TabsTrigger value="best">Best</TabsTrigger>
+              </TabsList>
+              
+              <TabsContent value="all" className="space-y-6">
+                {/* Categories Section */}
+                <div className="mb-6">
+                  <div className="flex justify-between items-center mb-3">
+                    <h2 className="text-lg font-semibold">Categories</h2>
+                  </div>
+                  <div className="grid grid-cols-3 gap-2">
+                    {categories.map((category) => (
+                      <Button
+                        key={category.id}
+                        variant="outline"
+                        className="flex flex-col items-center py-3 h-auto"
+                      >
+                        <span className="text-xl mb-1">{category.icon}</span>
+                        <span className="text-xs">{category.name}</span>
+                      </Button>
+                    ))}
+                  </div>
+                </div>
+
+                {/* Nearby Spas Section */}
+                <div className="mb-6">
+                  <div className="flex justify-between items-center mb-3">
+                    <h2 className="text-lg font-semibold">Nearby Spas</h2>
+                    <Button 
+                      variant="ghost" 
+                      size="sm" 
+                      className="text-xs flex items-center p-0"
+                      onClick={() => handleViewAll('nearby')}
+                    >
+                      View All
+                      <ChevronRight size={14} className="ml-1" />
+                    </Button>
+                  </div>
+                  <div className="grid grid-cols-2 gap-4">
+                    {nearbySpas.slice(0, 4).map((spa) => (
+                      <VenueCard
+                        key={spa.id}
+                        id={spa.id}
+                        name={spa.name}
+                        address={spa.address}
+                        city={spa.city}
+                        imageUrl={spa.image_url}
+                        rating={spa.rating}
+                        price={spa.price_per_session}
+                        priceLabel="From"
+                        type="spa"
+                      />
+                    ))}
+                  </div>
+                </div>
+
+                {/* Best Spas Section */}
+                <div className="mb-6">
+                  <div className="flex justify-between items-center mb-3">
+                    <h2 className="text-lg font-semibold">Best Spas</h2>
+                    <Button 
+                      variant="ghost" 
+                      size="sm" 
+                      className="text-xs flex items-center p-0"
+                      onClick={() => handleViewAll('best')}
+                    >
+                      View All
+                      <ChevronRight size={14} className="ml-1" />
+                    </Button>
+                  </div>
+                  <div className="grid grid-cols-2 gap-4">
+                    {bestSpas.slice(0, 4).map((spa) => (
+                      <VenueCard
+                        key={spa.id}
+                        id={spa.id}
+                        name={spa.name}
+                        address={spa.address}
+                        city={spa.city}
+                        imageUrl={spa.image_url}
+                        rating={spa.rating}
+                        price={spa.price_per_session}
+                        priceLabel="From"
+                        type="spa"
+                      />
+                    ))}
+                  </div>
+                </div>
+              </TabsContent>
+              
+              <TabsContent value="nearby">
+                <div className="mb-3">
+                  <h2 className="text-lg font-semibold">Nearby Spas</h2>
+                </div>
+                <div className="grid grid-cols-2 gap-4">
+                  {nearbySpas.map((spa) => (
+                    <VenueCard
+                      key={spa.id}
+                      id={spa.id}
+                      name={spa.name}
+                      address={spa.address}
+                      city={spa.city}
+                      imageUrl={spa.image_url}
+                      rating={spa.rating}
+                      price={spa.price_per_session}
+                      priceLabel="From"
+                      type="spa"
+                    />
+                  ))}
+                </div>
+              </TabsContent>
+              
+              <TabsContent value="best">
+                <div className="mb-3">
+                  <h2 className="text-lg font-semibold">Best Spas</h2>
+                </div>
+                <div className="grid grid-cols-2 gap-4">
+                  {bestSpas.map((spa) => (
+                    <VenueCard
+                      key={spa.id}
+                      id={spa.id}
+                      name={spa.name}
+                      address={spa.address}
+                      city={spa.city}
+                      imageUrl={spa.image_url}
+                      rating={spa.rating}
+                      price={spa.price_per_session}
+                      priceLabel="From"
+                      type="spa"
+                    />
+                  ))}
+                </div>
+              </TabsContent>
+            </Tabs>
           </>
         )}
       </main>
