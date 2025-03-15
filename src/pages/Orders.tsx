@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { Button } from '@/components/ui/button';
@@ -8,22 +7,7 @@ import { useToast } from '@/components/ui/use-toast';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/hooks/useAuth';
 import { format } from 'date-fns';
-
-type Booking = {
-  id: string;
-  user_id: string;
-  restaurant_id: string;
-  booking_date: string;
-  booking_time: string;
-  guests: number;
-  status: 'confirmed' | 'cancelled' | 'pending';
-  created_at: string;
-  restaurant: {
-    name: string;
-    address: string;
-    image_url: string;
-  };
-};
+import { Booking } from '@/integrations/supabase/types-db';
 
 const Orders = () => {
   const navigate = useNavigate();
@@ -52,7 +36,12 @@ const Orders = () => {
         
         if (error) throw error;
         
-        setBookings(data || []);
+        const typedBookings = (data || []).map(booking => ({
+          ...booking,
+          status: booking.status as 'confirmed' | 'cancelled' | 'pending'
+        }));
+        
+        setBookings(typedBookings);
       } catch (error) {
         console.error('Error fetching bookings:', error);
         toast({
