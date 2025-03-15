@@ -26,11 +26,26 @@ const AppRoutes = () => {
   useEffect(() => {
     const checkSession = async () => {
       const { data } = await supabase.auth.getSession();
+      console.log("Current session:", data.session);
       setInitialSession(data.session);
       setInitialLoading(false);
     };
     
     checkSession();
+
+    // Listen for auth changes
+    const { data: authListener } = supabase.auth.onAuthStateChange(
+      (event, session) => {
+        console.log("Auth state changed:", event, session?.user?.email);
+        setInitialSession(session);
+      }
+    );
+    
+    return () => {
+      if (authListener && authListener.subscription) {
+        authListener.subscription.unsubscribe();
+      }
+    };
   }, []);
 
   if (initialLoading) {

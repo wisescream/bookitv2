@@ -78,7 +78,9 @@ const AuthForm: React.FC<AuthFormProps> = ({ type }) => {
           description: "Welcome to BOOKIT",
         });
 
-        navigate('/home');
+        // Force navigation to home after successful login
+        console.log("Login successful, navigating to /home");
+        window.location.href = '/home';
       }
     } catch (error: any) {
       setError(error.message || 'An unexpected error occurred');
