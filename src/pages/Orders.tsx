@@ -1,3 +1,4 @@
+
 import { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { Button } from '@/components/ui/button';
@@ -7,13 +8,21 @@ import { useToast } from '@/components/ui/use-toast';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/hooks/useAuth';
 import { format } from 'date-fns';
-import { Booking } from '@/integrations/supabase/types-db';
+import { Booking, Restaurant } from '@/integrations/supabase/types-db';
+
+// Define a type for the restaurant data returned by the Supabase query
+type PartialRestaurant = Pick<Restaurant, 'name' | 'address' | 'image_url'>;
+
+// Define a type that extends Booking but with the partial restaurant type
+interface BookingWithPartialRestaurant extends Omit<Booking, 'restaurant'> {
+  restaurant: PartialRestaurant;
+}
 
 const Orders = () => {
   const navigate = useNavigate();
   const { toast } = useToast();
   const { user } = useAuth();
-  const [bookings, setBookings] = useState<Booking[]>([]);
+  const [bookings, setBookings] = useState<BookingWithPartialRestaurant[]>([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -41,7 +50,7 @@ const Orders = () => {
           status: booking.status as 'confirmed' | 'cancelled' | 'pending'
         }));
         
-        setBookings(typedBookings);
+        setBookings(typedBookings as BookingWithPartialRestaurant[]);
       } catch (error) {
         console.error('Error fetching bookings:', error);
         toast({
