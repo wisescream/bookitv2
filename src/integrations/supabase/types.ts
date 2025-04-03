@@ -221,6 +221,9 @@ export type Database = {
           name: string
           price_per_night: number
           rating: number | null
+          tripadvisor_last_updated: string | null
+          tripadvisor_rating: number | null
+          tripadvisor_reviews_count: number | null
         }
         Insert: {
           address: string
@@ -233,6 +236,9 @@ export type Database = {
           name: string
           price_per_night: number
           rating?: number | null
+          tripadvisor_last_updated?: string | null
+          tripadvisor_rating?: number | null
+          tripadvisor_reviews_count?: number | null
         }
         Update: {
           address?: string
@@ -245,6 +251,9 @@ export type Database = {
           name?: string
           price_per_night?: number
           rating?: number | null
+          tripadvisor_last_updated?: string | null
+          tripadvisor_rating?: number | null
+          tripadvisor_reviews_count?: number | null
         }
         Relationships: []
       }
@@ -281,6 +290,9 @@ export type Database = {
           name: string
           open_time: string
           rating: number | null
+          tripadvisor_last_updated: string | null
+          tripadvisor_rating: number | null
+          tripadvisor_reviews_count: number | null
         }
         Insert: {
           address: string
@@ -293,6 +305,9 @@ export type Database = {
           name: string
           open_time: string
           rating?: number | null
+          tripadvisor_last_updated?: string | null
+          tripadvisor_rating?: number | null
+          tripadvisor_reviews_count?: number | null
         }
         Update: {
           address?: string
@@ -305,6 +320,9 @@ export type Database = {
           name?: string
           open_time?: string
           rating?: number | null
+          tripadvisor_last_updated?: string | null
+          tripadvisor_rating?: number | null
+          tripadvisor_reviews_count?: number | null
         }
         Relationships: []
       }
@@ -361,6 +379,9 @@ export type Database = {
           name: string
           price_per_session: number
           rating: number | null
+          tripadvisor_last_updated: string | null
+          tripadvisor_rating: number | null
+          tripadvisor_reviews_count: number | null
         }
         Insert: {
           address: string
@@ -373,6 +394,9 @@ export type Database = {
           name: string
           price_per_session: number
           rating?: number | null
+          tripadvisor_last_updated?: string | null
+          tripadvisor_rating?: number | null
+          tripadvisor_reviews_count?: number | null
         }
         Update: {
           address?: string
@@ -385,6 +409,9 @@ export type Database = {
           name?: string
           price_per_session?: number
           rating?: number | null
+          tripadvisor_last_updated?: string | null
+          tripadvisor_rating?: number | null
+          tripadvisor_reviews_count?: number | null
         }
         Relationships: []
       }
