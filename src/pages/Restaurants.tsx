@@ -25,44 +25,69 @@ const Restaurants = () => {
   const [bestRestaurants, setBestRestaurants] = useState<Restaurant[]>([]);
   const [loading, setLoading] = useState(true);
   const [activeTab, setActiveTab] = useState<string>('all');
+  const [activeCategory, setActiveCategory] = useState<string | undefined>(undefined);
+
+  // Find active category name
+  const activeCategoryName = activeCategory 
+    ? categories.find(cat => cat.id === activeCategory)?.name 
+    : undefined;
 
   useEffect(() => {
-    const fetchRestaurants = async () => {
-      try {
-        const { data, error } = await supabase
-          .from('restaurants')
-          .select('*');
-        
-        if (error) throw error;
-        
-        setRestaurants(data || []);
-
-        // For demo purposes, we'll randomly assign these to nearby and best
-        if (data) {
-          const shuffled = [...data].sort(() => 0.5 - Math.random());
-          setNearbyRestaurants(shuffled.slice(0, 4));
-          
-          // Sort by name for "best" (in a real app, this would be by rating)
-          const sorted = [...data].sort((a, b) => a.name.localeCompare(b.name));
-          setBestRestaurants(sorted.slice(0, 4));
-        }
-      } catch (error) {
-        console.error('Error fetching restaurants:', error);
-        toast({
-          title: 'Error',
-          description: 'Failed to load restaurants',
-          variant: 'destructive',
-        });
-      } finally {
-        setLoading(false);
-      }
-    };
-
     fetchRestaurants();
-  }, [toast]);
+  }, [activeCategory, toast]);
+
+  const fetchRestaurants = async () => {
+    try {
+      setLoading(true);
+      
+      let query = supabase
+        .from('restaurants')
+        .select('*');
+      
+      // Add category filter if active
+      if (activeCategory) {
+        query = query.eq('category', activeCategory);
+      }
+      
+      const { data, error } = await query;
+      
+      if (error) throw error;
+      
+      setRestaurants(data || []);
+
+      // For nearby restaurants, we'll simulate by taking a random subset
+      if (data) {
+        const shuffled = [...data].sort(() => 0.5 - Math.random());
+        setNearbyRestaurants(shuffled.slice(0, 6));
+        
+        // For best restaurants, sort by rating
+        const sorted = [...data].sort((a, b) => (b.rating || 0) - (a.rating || 0));
+        setBestRestaurants(sorted.slice(0, 6));
+      }
+    } catch (error) {
+      console.error('Error fetching restaurants:', error);
+      toast({
+        title: 'Error',
+        description: 'Failed to load restaurants',
+        variant: 'destructive',
+      });
+    } finally {
+      setLoading(false);
+    }
+  };
 
   const handleTabChange = (value: string) => {
     setActiveTab(value);
+  };
+
+  const handleCategorySelect = (categoryId: string) => {
+    setActiveCategory(prevCategory => 
+      prevCategory === categoryId ? undefined : categoryId
+    );
+  };
+
+  const handleClearFilter = () => {
+    setActiveCategory(undefined);
   };
 
   const handleViewAll = (section: string) => {
@@ -73,7 +98,11 @@ const Restaurants = () => {
   // Content for the "All" tab
   const allContent = (
     <>
-      <CategorySection categories={categories} />
+      <CategorySection 
+        categories={categories} 
+        activeCategory={activeCategory}
+        onCategorySelect={handleCategorySelect}
+      />
       <VenueSection 
         title="Nearby Restaurants" 
         venues={nearbyRestaurants} 
@@ -112,7 +141,10 @@ const Restaurants = () => {
       title="Restaurants"
       loading={loading}
       activeTab={activeTab}
+      activeCategory={activeCategory}
+      activeCategoryName={activeCategoryName}
       onTabChange={handleTabChange}
+      onClearFilter={handleClearFilter}
       allContent={allContent}
       nearbyContent={nearbyContent}
       bestContent={bestContent}

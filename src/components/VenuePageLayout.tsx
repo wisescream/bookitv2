@@ -9,7 +9,10 @@ type VenuePageLayoutProps = {
   title: string;
   loading: boolean;
   activeTab: string;
+  activeCategory?: string;
+  activeCategoryName?: string;
   onTabChange: (value: string) => void;
+  onClearFilter?: () => void;
   allContent: ReactNode;
   nearbyContent: ReactNode;
   bestContent: ReactNode;
@@ -19,7 +22,10 @@ const VenuePageLayout: React.FC<VenuePageLayoutProps> = ({
   title,
   loading,
   activeTab,
+  activeCategory,
+  activeCategoryName,
   onTabChange,
+  onClearFilter,
   allContent,
   nearbyContent,
   bestContent
@@ -32,7 +38,12 @@ const VenuePageLayout: React.FC<VenuePageLayoutProps> = ({
       exit={{ opacity: 0 }}
       transition={{ duration: 0.3 }}
     >
-      <VenueHeader title={title} />
+      <VenueHeader 
+        title={title} 
+        activeCategory={activeCategory} 
+        activeCategoryName={activeCategoryName} 
+        onClearFilter={onClearFilter} 
+      />
 
       <main className="flex-1 px-6 pb-20">
         {loading ? (

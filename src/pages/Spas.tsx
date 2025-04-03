@@ -25,44 +25,69 @@ const Spas = () => {
   const [bestSpas, setBestSpas] = useState<Spa[]>([]);
   const [loading, setLoading] = useState(true);
   const [activeTab, setActiveTab] = useState<string>('all');
+  const [activeCategory, setActiveCategory] = useState<string | undefined>(undefined);
+
+  // Find active category name
+  const activeCategoryName = activeCategory 
+    ? categories.find(cat => cat.id === activeCategory)?.name 
+    : undefined;
 
   useEffect(() => {
-    const fetchSpas = async () => {
-      try {
-        const { data, error } = await supabase
-          .from('spas')
-          .select('*');
-        
-        if (error) throw error;
-        
-        setSpas(data || []);
-
-        // For demo purposes, we'll randomly assign these to nearby and best
-        if (data) {
-          const shuffled = [...data].sort(() => 0.5 - Math.random());
-          setNearbySpas(shuffled.slice(0, 4));
-          
-          // Sort by rating for "best" spas
-          const sorted = [...data].sort((a, b) => (b.rating || 0) - (a.rating || 0));
-          setBestSpas(sorted.slice(0, 4));
-        }
-      } catch (error) {
-        console.error('Error fetching spas:', error);
-        toast({
-          title: 'Error',
-          description: 'Failed to load spas',
-          variant: 'destructive',
-        });
-      } finally {
-        setLoading(false);
-      }
-    };
-
     fetchSpas();
-  }, [toast]);
+  }, [activeCategory, toast]);
+
+  const fetchSpas = async () => {
+    try {
+      setLoading(true);
+      
+      let query = supabase
+        .from('spas')
+        .select('*');
+      
+      // Add category filter if active
+      if (activeCategory) {
+        query = query.eq('category', activeCategory);
+      }
+      
+      const { data, error } = await query;
+      
+      if (error) throw error;
+      
+      setSpas(data || []);
+
+      if (data) {
+        // For nearby spas, we'll simulate by taking a random subset
+        const shuffled = [...data].sort(() => 0.5 - Math.random());
+        setNearbySpas(shuffled.slice(0, 6));
+        
+        // Sort by rating for "best" spas
+        const sorted = [...data].sort((a, b) => (b.rating || 0) - (a.rating || 0));
+        setBestSpas(sorted.slice(0, 6));
+      }
+    } catch (error) {
+      console.error('Error fetching spas:', error);
+      toast({
+        title: 'Error',
+        description: 'Failed to load spas',
+        variant: 'destructive',
+      });
+    } finally {
+      setLoading(false);
+    }
+  };
 
   const handleTabChange = (value: string) => {
     setActiveTab(value);
+  };
+
+  const handleCategorySelect = (categoryId: string) => {
+    setActiveCategory(prevCategory => 
+      prevCategory === categoryId ? undefined : categoryId
+    );
+  };
+
+  const handleClearFilter = () => {
+    setActiveCategory(undefined);
   };
 
   const handleViewAll = (section: string) => {
@@ -73,7 +98,11 @@ const Spas = () => {
   // Content for the "All" tab
   const allContent = (
     <>
-      <CategorySection categories={categories} />
+      <CategorySection 
+        categories={categories} 
+        activeCategory={activeCategory}
+        onCategorySelect={handleCategorySelect}
+      />
       <VenueSection 
         title="Nearby Spas" 
         venues={nearbySpas} 
@@ -112,7 +141,10 @@ const Spas = () => {
       title="Spas"
       loading={loading}
       activeTab={activeTab}
+      activeCategory={activeCategory}
+      activeCategoryName={activeCategoryName}
       onTabChange={handleTabChange}
+      onClearFilter={handleClearFilter}
       allContent={allContent}
       nearbyContent={nearbyContent}
       bestContent={bestContent}

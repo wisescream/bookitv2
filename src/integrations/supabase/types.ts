@@ -50,6 +50,83 @@ export type Database = {
           },
         ]
       }
+      business_accounts: {
+        Row: {
+          address: string | null
+          created_at: string
+          description: string | null
+          email: string
+          id: string
+          logo_url: string | null
+          name: string
+          phone: string | null
+          updated_at: string
+        }
+        Insert: {
+          address?: string | null
+          created_at?: string
+          description?: string | null
+          email: string
+          id?: string
+          logo_url?: string | null
+          name: string
+          phone?: string | null
+          updated_at?: string
+        }
+        Update: {
+          address?: string | null
+          created_at?: string
+          description?: string | null
+          email?: string
+          id?: string
+          logo_url?: string | null
+          name?: string
+          phone?: string | null
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      business_services: {
+        Row: {
+          business_id: string
+          created_at: string
+          description: string | null
+          duration: number | null
+          id: string
+          name: string
+          price: number | null
+          updated_at: string
+        }
+        Insert: {
+          business_id: string
+          created_at?: string
+          description?: string | null
+          duration?: number | null
+          id?: string
+          name: string
+          price?: number | null
+          updated_at?: string
+        }
+        Update: {
+          business_id?: string
+          created_at?: string
+          description?: string | null
+          duration?: number | null
+          id?: string
+          name?: string
+          price?: number | null
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "business_services_business_id_fkey"
+            columns: ["business_id"]
+            isOneToOne: false
+            referencedRelation: "business_accounts"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       food_items: {
         Row: {
           category: string
@@ -91,9 +168,51 @@ export type Database = {
           },
         ]
       }
+      hotel_bookings: {
+        Row: {
+          check_in_date: string
+          check_out_date: string
+          created_at: string | null
+          guests: number
+          hotel_id: string
+          id: string
+          status: string
+          user_id: string
+        }
+        Insert: {
+          check_in_date: string
+          check_out_date: string
+          created_at?: string | null
+          guests?: number
+          hotel_id: string
+          id?: string
+          status?: string
+          user_id: string
+        }
+        Update: {
+          check_in_date?: string
+          check_out_date?: string
+          created_at?: string | null
+          guests?: number
+          hotel_id?: string
+          id?: string
+          status?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "hotel_bookings_hotel_id_fkey"
+            columns: ["hotel_id"]
+            isOneToOne: false
+            referencedRelation: "hotels"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       hotels: {
         Row: {
           address: string
+          category: string | null
           city: string
           created_at: string | null
           description: string | null
@@ -105,6 +224,7 @@ export type Database = {
         }
         Insert: {
           address: string
+          category?: string | null
           city: string
           created_at?: string | null
           description?: string | null
@@ -116,6 +236,7 @@ export type Database = {
         }
         Update: {
           address?: string
+          category?: string | null
           city?: string
           created_at?: string | null
           description?: string | null
@@ -151,6 +272,7 @@ export type Database = {
       restaurants: {
         Row: {
           address: string
+          category: string | null
           city: string
           close_time: string
           created_at: string | null
@@ -158,9 +280,11 @@ export type Database = {
           image_url: string | null
           name: string
           open_time: string
+          rating: number | null
         }
         Insert: {
           address: string
+          category?: string | null
           city: string
           close_time: string
           created_at?: string | null
@@ -168,9 +292,11 @@ export type Database = {
           image_url?: string | null
           name: string
           open_time: string
+          rating?: number | null
         }
         Update: {
           address?: string
+          category?: string | null
           city?: string
           close_time?: string
           created_at?: string | null
@@ -178,12 +304,55 @@ export type Database = {
           image_url?: string | null
           name?: string
           open_time?: string
+          rating?: number | null
         }
         Relationships: []
+      }
+      spa_bookings: {
+        Row: {
+          booking_date: string
+          booking_time: string
+          created_at: string | null
+          id: string
+          service_type: string
+          spa_id: string
+          status: string
+          user_id: string
+        }
+        Insert: {
+          booking_date: string
+          booking_time: string
+          created_at?: string | null
+          id?: string
+          service_type: string
+          spa_id: string
+          status?: string
+          user_id: string
+        }
+        Update: {
+          booking_date?: string
+          booking_time?: string
+          created_at?: string | null
+          id?: string
+          service_type?: string
+          spa_id?: string
+          status?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "spa_bookings_spa_id_fkey"
+            columns: ["spa_id"]
+            isOneToOne: false
+            referencedRelation: "spas"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       spas: {
         Row: {
           address: string
+          category: string | null
           city: string
           created_at: string | null
           description: string | null
@@ -195,6 +364,7 @@ export type Database = {
         }
         Insert: {
           address: string
+          category?: string | null
           city: string
           created_at?: string | null
           description?: string | null
@@ -206,6 +376,7 @@ export type Database = {
         }
         Update: {
           address?: string
+          category?: string | null
           city?: string
           created_at?: string | null
           description?: string | null
@@ -217,12 +388,55 @@ export type Database = {
         }
         Relationships: []
       }
+      user_roles: {
+        Row: {
+          business_id: string | null
+          created_at: string
+          id: string
+          role: string
+          user_id: string
+        }
+        Insert: {
+          business_id?: string | null
+          created_at?: string
+          id?: string
+          role: string
+          user_id: string
+        }
+        Update: {
+          business_id?: string | null
+          created_at?: string
+          id?: string
+          role?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "user_roles_business_id_fkey"
+            columns: ["business_id"]
+            isOneToOne: false
+            referencedRelation: "business_accounts"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
     }
     Views: {
       [_ in never]: never
     }
     Functions: {
-      [_ in never]: never
+      has_role: {
+        Args: {
+          role: string
+        }
+        Returns: boolean
+      }
+      is_business_member: {
+        Args: {
+          business_id: string
+        }
+        Returns: boolean
+      }
     }
     Enums: {
       [_ in never]: never

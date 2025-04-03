@@ -10,9 +10,15 @@ type Category = {
 
 type CategorySectionProps = {
   categories: Category[];
+  activeCategory?: string;
+  onCategorySelect: (categoryId: string) => void;
 };
 
-const CategorySection: React.FC<CategorySectionProps> = ({ categories }) => {
+const CategorySection: React.FC<CategorySectionProps> = ({ 
+  categories, 
+  activeCategory, 
+  onCategorySelect 
+}) => {
   return (
     <div className="mb-6">
       <div className="flex justify-between items-center mb-3">
@@ -22,8 +28,11 @@ const CategorySection: React.FC<CategorySectionProps> = ({ categories }) => {
         {categories.map((category) => (
           <Button
             key={category.id}
-            variant="outline"
-            className="flex flex-col items-center py-3 h-auto"
+            variant={activeCategory === category.id ? "default" : "outline"}
+            className={`flex flex-col items-center py-3 h-auto ${
+              activeCategory === category.id ? "bg-primary text-primary-foreground" : ""
+            }`}
+            onClick={() => onCategorySelect(category.id)}
           >
             <span className="text-xl mb-1">{category.icon}</span>
             <span className="text-xs">{category.name}</span>

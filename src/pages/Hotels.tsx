@@ -25,44 +25,69 @@ const Hotels = () => {
   const [bestHotels, setBestHotels] = useState<Hotel[]>([]);
   const [loading, setLoading] = useState(true);
   const [activeTab, setActiveTab] = useState<string>('all');
+  const [activeCategory, setActiveCategory] = useState<string | undefined>(undefined);
+
+  // Find active category name
+  const activeCategoryName = activeCategory 
+    ? categories.find(cat => cat.id === activeCategory)?.name 
+    : undefined;
 
   useEffect(() => {
-    const fetchHotels = async () => {
-      try {
-        const { data, error } = await supabase
-          .from('hotels')
-          .select('*');
-        
-        if (error) throw error;
-        
-        setHotels(data || []);
-
-        // For demo purposes, we'll randomly assign these to nearby and best
-        if (data) {
-          const shuffled = [...data].sort(() => 0.5 - Math.random());
-          setNearbyHotels(shuffled.slice(0, 4));
-          
-          // Sort by rating for "best" hotels
-          const sorted = [...data].sort((a, b) => (b.rating || 0) - (a.rating || 0));
-          setBestHotels(sorted.slice(0, 4));
-        }
-      } catch (error) {
-        console.error('Error fetching hotels:', error);
-        toast({
-          title: 'Error',
-          description: 'Failed to load hotels',
-          variant: 'destructive',
-        });
-      } finally {
-        setLoading(false);
-      }
-    };
-
     fetchHotels();
-  }, [toast]);
+  }, [activeCategory, toast]);
+
+  const fetchHotels = async () => {
+    try {
+      setLoading(true);
+      
+      let query = supabase
+        .from('hotels')
+        .select('*');
+      
+      // Add category filter if active
+      if (activeCategory) {
+        query = query.eq('category', activeCategory);
+      }
+      
+      const { data, error } = await query;
+      
+      if (error) throw error;
+      
+      setHotels(data || []);
+
+      if (data) {
+        // For nearby hotels, we'll simulate by taking a random subset
+        const shuffled = [...data].sort(() => 0.5 - Math.random());
+        setNearbyHotels(shuffled.slice(0, 6));
+        
+        // Sort by rating for "best" hotels
+        const sorted = [...data].sort((a, b) => (b.rating || 0) - (a.rating || 0));
+        setBestHotels(sorted.slice(0, 6));
+      }
+    } catch (error) {
+      console.error('Error fetching hotels:', error);
+      toast({
+        title: 'Error',
+        description: 'Failed to load hotels',
+        variant: 'destructive',
+      });
+    } finally {
+      setLoading(false);
+    }
+  };
 
   const handleTabChange = (value: string) => {
     setActiveTab(value);
+  };
+
+  const handleCategorySelect = (categoryId: string) => {
+    setActiveCategory(prevCategory => 
+      prevCategory === categoryId ? undefined : categoryId
+    );
+  };
+
+  const handleClearFilter = () => {
+    setActiveCategory(undefined);
   };
 
   const handleViewAll = (section: string) => {
@@ -73,7 +98,11 @@ const Hotels = () => {
   // Content for the "All" tab
   const allContent = (
     <>
-      <CategorySection categories={categories} />
+      <CategorySection 
+        categories={categories} 
+        activeCategory={activeCategory}
+        onCategorySelect={handleCategorySelect}
+      />
       <VenueSection 
         title="Nearby Hotels" 
         venues={nearbyHotels} 
@@ -112,7 +141,10 @@ const Hotels = () => {
       title="Hotels"
       loading={loading}
       activeTab={activeTab}
+      activeCategory={activeCategory}
+      activeCategoryName={activeCategoryName}
       onTabChange={handleTabChange}
+      onClearFilter={handleClearFilter}
       allContent={allContent}
       nearbyContent={nearbyContent}
       bestContent={bestContent}
