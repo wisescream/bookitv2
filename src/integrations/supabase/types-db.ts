@@ -15,6 +15,8 @@ export type Restaurant = {
   open_time: string;
   close_time: string;
   created_at: string;
+  rating: number | null;
+  category: string | null;
 };
 
 export type Hotel = {
@@ -27,6 +29,7 @@ export type Hotel = {
   price_per_night: number;
   rating: number | null;
   created_at: string;
+  category: string | null;
 };
 
 export type Spa = {
@@ -39,6 +42,7 @@ export type Spa = {
   price_per_session: number;
   rating: number | null;
   created_at: string;
+  category: string | null;
 };
 
 export type Booking = {
