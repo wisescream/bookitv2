@@ -3,6 +3,7 @@ import React from 'react';
 import { Card, CardContent } from "@/components/ui/card";
 import { MapPin, Star } from "lucide-react";
 import { useNavigate } from 'react-router-dom';
+import TripAdvisorRating from './TripAdvisorRating';
 
 type VenueCardProps = {
   id: string;
@@ -14,6 +15,9 @@ type VenueCardProps = {
   price?: number;
   priceLabel?: string;
   type: 'restaurant' | 'hotel' | 'spa';
+  tripadvisorRating?: number | null;
+  tripadvisorReviewsCount?: number | null;
+  tripadvisorLastUpdated?: string | null;
 };
 
 const VenueCard: React.FC<VenueCardProps> = ({
@@ -26,6 +30,9 @@ const VenueCard: React.FC<VenueCardProps> = ({
   price,
   priceLabel,
   type,
+  tripadvisorRating,
+  tripadvisorReviewsCount,
+  tripadvisorLastUpdated,
 }) => {
   const navigate = useNavigate();
   
@@ -55,11 +62,19 @@ const VenueCard: React.FC<VenueCardProps> = ({
           <span className="truncate">{address}, {city}</span>
         </div>
         <div className="flex justify-between items-center mt-2">
-          {rating && (
+          {tripadvisorRating ? (
+            <TripAdvisorRating 
+              rating={tripadvisorRating}
+              reviewsCount={tripadvisorReviewsCount}
+              lastUpdated={tripadvisorLastUpdated}
+            />
+          ) : rating ? (
             <div className="flex items-center">
               <Star size={14} className="text-yellow-500 fill-yellow-500" />
               <span className="text-xs ml-1">{rating.toFixed(1)}</span>
             </div>
+          ) : (
+            <div></div>
           )}
           {price && (
             <div className="text-xs font-medium">

@@ -19,6 +19,9 @@ import Spas from "./pages/Spas";
 import Search from "./pages/Search";
 import Orders from "./pages/Orders";
 import Profile from "./pages/Profile";
+import RestaurantDetail from "./pages/RestaurantDetail";
+import HotelDetail from "./pages/HotelDetail";
+import SpaDetail from "./pages/SpaDetail";
 
 const queryClient = new QueryClient();
 
@@ -78,12 +81,24 @@ const AppRoutes = () => {
           element={initialSession ? <Restaurants /> : <Navigate to="/auth" replace />} 
         />
         <Route 
+          path="/restaurants/:id" 
+          element={initialSession ? <RestaurantDetail /> : <Navigate to="/auth" replace />} 
+        />
+        <Route 
           path="/hotels" 
           element={initialSession ? <Hotels /> : <Navigate to="/auth" replace />} 
         />
         <Route 
+          path="/hotels/:id" 
+          element={initialSession ? <HotelDetail /> : <Navigate to="/auth" replace />} 
+        />
+        <Route 
           path="/spas" 
           element={initialSession ? <Spas /> : <Navigate to="/auth" replace />} 
+        />
+        <Route 
+          path="/spas/:id" 
+          element={initialSession ? <SpaDetail /> : <Navigate to="/auth" replace />} 
         />
         <Route 
           path="/search" 

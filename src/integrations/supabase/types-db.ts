@@ -17,6 +17,9 @@ export type Restaurant = {
   created_at: string;
   rating: number | null;
   category: string | null;
+  tripadvisor_rating: number | null;
+  tripadvisor_reviews_count: number | null;
+  tripadvisor_last_updated: string | null;
 };
 
 export type Hotel = {
@@ -30,6 +33,9 @@ export type Hotel = {
   rating: number | null;
   created_at: string;
   category: string | null;
+  tripadvisor_rating: number | null;
+  tripadvisor_reviews_count: number | null;
+  tripadvisor_last_updated: string | null;
 };
 
 export type Spa = {
@@ -43,6 +49,9 @@ export type Spa = {
   rating: number | null;
   created_at: string;
   category: string | null;
+  tripadvisor_rating: number | null;
+  tripadvisor_reviews_count: number | null;
+  tripadvisor_last_updated: string | null;
 };
 
 export type Booking = {
