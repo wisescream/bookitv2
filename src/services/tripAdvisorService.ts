@@ -1,7 +1,4 @@
 
-// Note: This is a mock service that simulates fetching data from TripAdvisor
-// In a real application, you would need to integrate with the actual TripAdvisor API
-
 import { supabase } from '@/integrations/supabase/client';
 
 type VenueType = 'restaurant' | 'hotel' | 'spa';
