@@ -7,6 +7,7 @@ import VenuePageLayout from '@/components/VenuePageLayout';
 import CategorySection from '@/components/CategorySection';
 import VenueSection from '@/components/VenueSection';
 import VenueGrid from '@/components/VenueGrid';
+import { fetchVenuesRatings } from '@/services/tripAdvisorService';
 
 // Restaurant categories
 const categories = [
@@ -40,6 +41,9 @@ const Restaurants = () => {
     try {
       setLoading(true);
       
+      // Fetch TripAdvisor ratings
+      await fetchVenuesRatings('restaurant');
+      
       let query = supabase
         .from('restaurants')
         .select('*');
@@ -61,7 +65,11 @@ const Restaurants = () => {
         setNearbyRestaurants(shuffled.slice(0, 6));
         
         // For best restaurants, sort by rating
-        const sorted = [...data].sort((a, b) => (b.rating || 0) - (a.rating || 0));
+        const sorted = [...data].sort((a, b) => {
+          const ratingA = a.tripadvisor_rating || a.rating || 0;
+          const ratingB = b.tripadvisor_rating || b.rating || 0;
+          return ratingB - ratingA;
+        });
         setBestRestaurants(sorted.slice(0, 6));
       }
     } catch (error) {

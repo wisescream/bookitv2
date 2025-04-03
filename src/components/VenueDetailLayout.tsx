@@ -2,7 +2,7 @@
 import React, { ReactNode } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
-import { ChevronLeft, MapPin, Clock, Star } from 'lucide-react';
+import { ChevronLeft, MapPin, Clock, Star, CalendarRange } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import TripAdvisorRating from './TripAdvisorRating';
 import BottomNavigation from './BottomNavigation';
@@ -45,6 +45,18 @@ const VenueDetailLayout: React.FC<VenueDetailLayoutProps> = ({
   tripadvisorLastUpdated
 }) => {
   const navigate = useNavigate();
+
+  const scrollToBooking = () => {
+    // Find the booking tab and click it
+    const bookingTrigger = document.querySelector('[value="book"], [value="book-a-table"], [value="book-a-room"], [value="book-a-session"]') as HTMLButtonElement;
+    if (bookingTrigger) {
+      bookingTrigger.click();
+      // Scroll to the booking form
+      setTimeout(() => {
+        bookingTrigger.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      }, 100);
+    }
+  };
 
   return (
     <motion.div 
@@ -126,6 +138,14 @@ const VenueDetailLayout: React.FC<VenueDetailLayoutProps> = ({
             {description}
           </div>
         )}
+
+        {/* Reservation Button */}
+        <Button 
+          className="w-full mt-5 py-6 text-base"
+          onClick={scrollToBooking}
+        >
+          <CalendarRange className="mr-2" /> Make a Reservation
+        </Button>
       </div>
 
       {/* Main content */}

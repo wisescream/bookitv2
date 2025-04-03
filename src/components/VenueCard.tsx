@@ -37,12 +37,12 @@ const VenueCard: React.FC<VenueCardProps> = ({
   const navigate = useNavigate();
   
   const handleClick = () => {
-    navigate(`/${type}/${id}`);
+    navigate(`/${type}s/${id}`);
   };
 
   return (
     <Card 
-      className="rounded-xl overflow-hidden shadow-sm hover:shadow-md transition-shadow"
+      className="rounded-xl overflow-hidden shadow-sm hover:shadow-md transition-shadow cursor-pointer"
       onClick={handleClick}
     >
       <div 
